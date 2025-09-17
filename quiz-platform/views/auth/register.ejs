@@ -7,12 +7,18 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+        }
+        .page-container {
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            flex: 1;
+            margin: 10px auto;
         }
         .register-container {
-            max-width: 500px;
+            min-width: 450px;
+            max-width: 600px;
             width: 100%;
         }
         .register-card {
@@ -89,93 +95,85 @@
             margin-bottom: 15px;
         }
         .password-requirements {
-            background-color: #f8f9fa;
-            border-radius: 8px;
+            background-color: rgba(255, 249, 196, 0.3);
+            border-left: 4px solid #ffd43b;
             padding: 15px;
+            border-radius: 8px;
             margin-top: 20px;
-            font-size: 0.85rem;
-        }
-        .password-requirements ul {
-            margin-bottom: 0;
-            padding-left: 20px;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-        .form-text {
-            font-size: 0.85rem;
-            color: #6c757d;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-card">
-            <div class="register-header">
-                <div class="icon-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                    </svg>
+    <%- include('../partials/header') %>
+
+    <div class="page-container">
+        <div class="register-container">
+            <div class="register-card">
+                <div class="register-header">
+                    <div class="icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                    </div>
+                    <h3>Create Account</h3>
+                    <p class="mb-0">Join us to start creating and taking quizzes</p>
                 </div>
-                <h3>Create Account</h3>
-                <p class="mb-0">Join us to start creating and taking quizzes</p>
-            </div>
-            
-            <div class="register-body">
-                <% if (errors.length) { %>
-                    <div class="alert alert-danger">
-                        <strong>Please fix the following errors:</strong>
-                        <% errors.forEach(error => { %>
-                            <div class="mb-0 mt-2"><i class="bi bi-exclamation-circle-fill"></i> <%= error.msg %></div>
-                        <% }) %>
+
+                <div class="register-body">
+                    <% if (errors.length) { %>
+                        <div class="alert alert-danger">
+                            <strong>Please fix the following errors:</strong>
+                            <% errors.forEach(error => { %>
+                                <div class="mb-0 mt-2"><i class="bi bi-exclamation-circle-fill"></i> <%= error.msg %></div>
+                            <% }) %>
+                        </div>
+                    <% } %>
+
+                    <form method="POST" action="/register">
+                        <div class="mb-4">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                value="<%= formData.username || '' %>" placeholder="Choose a username" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                value="<%= formData.email || '' %>" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                placeholder="Create a password" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                placeholder="Confirm your password" required>
+                        </div>
+
+                        <div class="password-requirements">
+                            <strong>Password Requirements:</strong>
+                            <ul>
+                                <li>At least 6 characters long</li>
+                                <li>Should match the confirmation field</li>
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="btn btn-register w-100">Create Account</button>
+                    </form>
+
+                    <div class="register-footer">
+                        <p>Already have an account? <a href="/login">Sign in here</a></p>
                     </div>
-                <% } %>
-                
-                <form method="POST" action="/register">
-                    <div class="form-group">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" 
-                            value="<%= formData.username || '' %>" placeholder="Choose a username" required>
-                        <div class="form-text">Must be at least 3 characters long</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" 
-                            value="<%= formData.email || '' %>" placeholder="Enter your email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" 
-                            placeholder="Create a password" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
-                            placeholder="Confirm your password" required>
-                    </div>
-                    
-                    <div class="password-requirements">
-                        <strong>Password Requirements:</strong>
-                        <ul>
-                            <li>At least 6 characters long</li>
-                            <li>Should match the confirmation field</li>
-                        </ul>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-register w-100">Create Account</button>
-                </form>
-                
-                <div class="register-footer">
-                    <p>Already have an account? <a href="/login">Sign in here</a></p>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <%- include('../partials/footer') %>
 </body>
 </html>
