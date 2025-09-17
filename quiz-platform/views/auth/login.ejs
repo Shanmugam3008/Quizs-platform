@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+        }
+        .login-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+        .login-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .login-body {
+            padding: 30px;
+            background-color: #fff;
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            border-color: #4a6bff;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .btn-login {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: white;
+        }
+        .btn-login:hover {
+            background: linear-gradient(45deg, #405bd8, #5a0fb8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        .alert {
+            border-radius: 10px;
+            padding: 15px 20px;
+        }
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #718096;
+        }
+        .login-footer a {
+            color: #4a6bff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .login-footer a:hover {
+            color: #405bd8;
+        }
+        .admin-note {
+            background-color: rgba(255, 249, 196, 0.3);
+            border-left: 4px solid #ffd43b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.894.553h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .894.553h1.732a1.5 1.5 0 0 0 1.5-1.5V6a5 5 0 0 0-5-5z"/>
+                    </svg>
+                </div>
+                <h3>Welcome Back</h3>
+                <p class="mb-0">Sign in to access your account</p>
+            </div>
+            
+            <div class="login-body">
+                <% if (errors.length) { %>
+                    <div class="alert alert-danger">
+                        <strong>Please fix the following errors:</strong>
+                        <% errors.forEach(error => { %>
+                            <div class="mb-0 mt-2"><i class="bi bi-exclamation-circle-fill"></i> <%= error.msg %></div>
+                        <% }) %>
+                    </div>
+                <% } %>
+                
+                <form method="POST" action="/login">
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                            value="<%= formData.username || '' %>" placeholder="Enter your username" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                            placeholder="Enter your password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login w-100">Sign In</button>
+                </form>
+                
+                <div class="login-footer">
+                    <p>Don't have an account? <a href="/register">Create account</a></p>
+                </div>
+                
+                <div class="admin-note">
+                    <strong>Admin Access:</strong> Use username: <strong>admin</strong> with password: <strong>admin123</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

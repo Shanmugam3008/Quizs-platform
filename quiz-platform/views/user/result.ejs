@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .results-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .result-card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+            max-width: 600px;
+            width: 100%;
+        }
+        .result-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .result-body {
+            padding: 30px;
+            background-color: #fff;
+            text-align: center;
+        }
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(74, 107, 255, 0.3);
+            position: relative;
+            border: 5px solid white;
+            outline: 2px solid #4a6bff;
+        }
+        .score-text {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        .performance-feedback {
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        .performance-excellent {
+            background-color: rgba(140, 233, 154, 0.2);
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        .performance-good {
+            background-color: rgba(100, 181, 246, 0.2);
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+        }
+        .performance-average {
+            background-color: rgba(255, 213, 79, 0.2);
+            color: #f57f17;
+            border-left: 4px solid #ffc107;
+        }
+        .performance-poor {
+            background-color: rgba(239, 154, 154, 0.2);
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #405bd8, #5a0fb8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        .btn-outline-primary {
+            border: 2px solid #4a6bff;
+            color: #4a6bff;
+            border-radius: 8px;
+            padding: 10px 23px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .btn-outline-primary:hover {
+            background: #4a6bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        .result-details {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .detail-item {
+            text-align: center;
+            padding: 15px;
+            flex: 1;
+            min-width: 120px;
+        }
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4a6bff;
+        }
+        .detail-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f;
+            animation: confetti-fall 5s linear infinite;
+        }
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        @media (max-width: 576px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn-primary, .btn-outline-primary {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="results-container">
+        <div class="result-card">
+            <div class="result-header">
+                <h2><i class="fas fa-trophy me-2"></i>Quiz Completed!</h2>
+                <p class="mb-0">You've finished the quiz</p>
+            </div>
+            
+            <div class="result-body">
+                <div class="score-circle">
+                    <%= score %>/<%= total %>
+                </div>
+                
+                <h3>Your Score: <%= percentage %>%</h3>
+                
+                <div class="score-text">
+                    You answered <%= score %> out of <%= total %> questions correctly
+                </div>
+                
+                <div class="result-details">
+                    <div class="detail-item">
+                        <div class="detail-value"><%= score %></div>
+                        <div class="detail-label">Correct</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value"><%= total - score %></div>
+                        <div class="detail-label">Incorrect</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value"><%= percentage %>%</div>
+                        <div class="detail-label">Percentage</div>
+                    </div>
+                </div>
+                
+                <% if (percentage >= 80) { %>
+                    <div class="performance-feedback performance-excellent">
+                        <i class="fas fa-star me-2"></i>Excellent work! You're a quiz master!
+                    </div>
+                <% } else if (percentage >= 60) { %>
+                    <div class="performance-feedback performance-good">
+                        <i class="fas fa-thumbs-up me-2"></i>Good job! You're on the right track!
+                    </div>
+                <% } else if (percentage >= 40) { %>
+                    <div class="performance-feedback performance-average">
+                        <i class="fas fa-lightbulb me-2"></i>Not bad! Keep practicing to improve!
+                    </div>
+                <% } else { %>
+                    <div class="performance-feedback performance-poor">
+                        <i class="fas fa-redo me-2"></i>Keep studying and try again. You can do it!
+                    </div>
+                <% } %>
+                
+                <div class="action-buttons">
+                    <a href="/user/dashboard" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </a>
+                    <a href="/user/take-quiz/<%= quizId %>" class="btn btn-outline-primary">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <script>
+    // Add confetti effect for excellent scores
+    <% if (percentage >= 80) { %>
+        document.addEventListener('DOMContentLoaded', function() {
+            const colors = ['#4a6bff', '#6a11cb', '#ff6b6b', '#f9ca24', '#6c5ce7'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.width = (5 + Math.random() * 10) + 'px';
+                confetti.style.height = (5 + Math.random() * 10) + 'px';
+                document.body.appendChild(confetti);
+            }
+        });
+    <% } %>
+    </script>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

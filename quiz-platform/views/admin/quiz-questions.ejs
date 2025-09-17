@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        .questions-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        .page-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .question-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .question-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .question-body {
+            padding: 20px;
+        }
+        .option-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        .option-list li:last-child {
+            border-bottom: none;
+        }
+        .option-label {
+            font-weight: 600;
+            color: #4a6bff;
+            margin-right: 8px;
+        }
+        .correct-answer {
+            background-color: rgba(140, 233, 154, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #40c057;
+        }
+        .btn-secondary {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #c82333, #a71e2a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .empty-icon {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .modal-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 15px 20px;
+        }
+        .modal-title {
+            font-weight: 600;
+        }
+        .modal-body {
+            padding: 25px;
+        }
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 15px 20px;
+        }
+        .question-number {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="questions-container">
+        <div class="page-header">
+            <h2><i class="fas fa-question-circle me-2"></i>Quiz Questions</h2>
+            <p class="mb-0">Manage questions for your quiz</p>
+        </div>
+        
+        <% if (questions.length) { %>
+            <% questions.forEach((question, index) => { %>
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="d-flex align-items-center">
+                            <div class="question-number me-3"><%= index + 1 %></div>
+                            <h5 class="mb-0">Question</h5>
+                        </div>
+                        <button class="btn btn-danger" onclick="openDeleteModal(<%= question.id %>, <%= quizId %>, '<%= question.question_text.substring(0, 30) %>...')">
+                            <i class="fas fa-trash me-1"></i> Delete
+                        </button>
+                    </div>
+                    <div class="question-body">
+                        <p class="fw-bold mb-3"><%= question.question_text %></p>
+                        
+                        <ul class="option-list">
+                            <li><span class="option-label">A:</span> <%= question.option_a %></li>
+                            <li><span class="option-label">B:</span> <%= question.option_b %></li>
+                            <% if (question.option_c) { %>
+                                <li><span class="option-label">C:</span> <%= question.option_c %></li>
+                            <% } %>
+                            <% if (question.option_d) { %>
+                                <li><span class="option-label">D:</span> <%= question.option_d %></li>
+                            <% } %>
+                        </ul>
+                        
+                        <div class="correct-answer mt-3">
+                            <p class="mb-0"><strong>Correct Answer:</strong> 
+                                <span class="text-success fw-bold">
+                                    <%= question.correct_answer.toUpperCase() %>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-question"></i>
+                </div>
+                <h4 class="text-muted">No questions found</h4>
+                <p class="text-muted">This quiz doesn't have any questions yet</p>
+                <a href="/quiz/admin/add-questions-to/<%= quizId %>" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus me-1"></i> Add Questions
+                </a>
+            </div>
+        <% } %>
+        
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/quiz/admin/dashboard" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+            <% if (questions.length) { %>
+                <a href="/quiz/admin/add-questions-to/<%= quizId %>" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i> Add More Questions
+                </a>
+            <% } %>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the question "<span id="questionText"></span>"?</p>
+                    <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete Question</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <!-- Bootstrap JS -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+    
+    <script>
+    let currentQuestionId = null;
+    let currentQuizId = null;
+    
+    function openDeleteModal(questionId, quizId, questionText) {
+        currentQuestionId = questionId;
+        currentQuizId = quizId;
+        document.getElementById('questionText').textContent = questionText;
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+    
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (currentQuestionId && currentQuizId) {
+            fetch(`/quiz/admin/question/${currentQuestionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                    deleteModal.hide();
+                    
+                    // Show success message
+                    alert('Question deleted successfully');
+                    
+                    // Reload the page to see the updated list
+                    window.location.href = `/quiz/admin/questions/${currentQuizId}`;
+                } else {
+                    alert('Error deleting question: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting question');
+            });
+        }
+    });
+    </script>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

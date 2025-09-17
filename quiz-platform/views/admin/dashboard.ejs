@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        .dashboard-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .stats-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .stats-card .card-body {
+            padding: 25px;
+            text-align: center;
+        }
+        .stats-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .quiz-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .quiz-card .card-body {
+            padding: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #405bd8, #5a0fb8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        .btn-info {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-info:hover {
+            background: linear-gradient(45deg, #138496, #11707d);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(23, 162, 184, 0.3);
+        }
+        .btn-outline-primary, .btn-outline-success {
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-outline-primary:hover, .btn-outline-success:hover {
+            transform: translateY(-2px);
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+        }
+        .badge-count {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+        }
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .action-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            background: rgba(74, 107, 255, 0.1);
+            color: #4a6bff;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+            <p class="mb-0">Manage your quizzes and questions</p>
+        </div>
+        
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4">
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h4>Add New Quiz</h4>
+                    <p class="text-muted">Create a new quiz with questions</p>
+                    <a href="/quiz/admin/add" class="btn btn-primary">Add Quiz</a>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h4>Manage Quizzes</h4>
+                    <p class="text-muted">View, edit or delete existing quizzes</p>
+                    <a href="/quiz/admin/manage" class="btn btn-info">Manage</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <h3 class="section-title">Recent Quizzes</h3>
+                
+                <% if (quizzes.length) { %>
+                    <div class="row">
+                        <% quizzes.forEach(quiz => { %>
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="quiz-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title mb-0"><%= quiz.title %></h5>
+                                            <span class="badge-count"><%= quiz.question_count %> questions</span>
+                                        </div>
+                                        <p class="card-text text-muted"><%= quiz.description || 'No description' %></p>
+                                        <div class="d-flex gap-2 mt-3">
+                                            <a href="/quiz/admin/questions/<%= quiz.id %>" class="btn btn-sm btn-outline-primary">View Questions</a>
+                                            <a href="/quiz/admin/add-questions-to/<%= quiz.id %>" class="btn btn-sm btn-outline-success">Add Questions</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <div class="py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No quizzes found</h4>
+                            <p class="text-muted">Create your first quiz to get started</p>
+                            <a href="/quiz/admin/add" class="btn btn-primary mt-2">Create Your First Quiz</a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>// dashboard.ejs placeholder

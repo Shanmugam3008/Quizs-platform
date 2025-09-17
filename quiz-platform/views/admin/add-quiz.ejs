@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .quiz-form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        .form-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .form-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .form-body {
+            padding: 30px;
+            background-color: #fff;
+        }
+        .form-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .form-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            border-color: #4a6bff;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+        }
+        textarea.form-control {
+            min-height: 120px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #405bd8, #5a0fb8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        .btn-secondary {
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .alert {
+            border-radius: 10px;
+            padding: 15px 20px;
+        }
+        .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        @media (max-width: 576px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="quiz-form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.894.553h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .894.553h1.732a1.5 1.5 0 0 0 1.5-1.5V6a5 5 0 0 0-5-5z"/>
+                    </svg>
+                </div>
+                <h3 class="form-title">Create New Quiz</h3>
+                <p class="form-subtitle">Fill in the details below to create a new quiz</p>
+            </div>
+            
+            <div class="form-body">
+                <% if (errors.length) { %>
+                    <div class="alert alert-danger">
+                        <strong>Please fix the following errors:</strong>
+                        <% errors.forEach(error => { %>
+                            <div class="mb-0 mt-2"><i class="bi bi-exclamation-circle-fill"></i> <%= error.msg %></div>
+                        <% }) %>
+                    </div>
+                <% } %>
+                
+                <form method="POST" action="/quiz/admin/add">
+                    <div class="mb-4">
+                        <label for="title" class="form-label">Quiz Title</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                            value="<%= formData.title || '' %>" placeholder="Enter quiz title" required>
+                        <div class="form-text">Make it descriptive and engaging for participants</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" 
+                            placeholder="Describe what this quiz is about"><%= formData.description || '' %></textarea>
+                        <div class="form-text">This helps participants understand what to expect from the quiz</div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="/quiz/admin/dashboard" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;">
+                                <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.207V10.5a.5.5 0 0 1-1 0V6.207L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z"/>
+                            </svg>
+                            Create Quiz
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

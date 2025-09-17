@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        .quiz-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .question-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .question-header {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            color: white;
+            padding: 15px 20px;
+        }
+        .question-body {
+            padding: 20px;
+        }
+        .option-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .option-card:hover {
+            border-color: #4a6bff;
+            background-color: #f8f9fa;
+        }
+        .option-card.selected {
+            border-color: #4a6bff;
+            background-color: rgba(74, 107, 255, 0.1);
+        }
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .form-check-label {
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-submit {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: white;
+        }
+        .btn-submit:hover {
+            background: linear-gradient(45deg, #405bd8, #5a0fb8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        .progress-container {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+        .progress-bar {
+            background: linear-gradient(45deg, #4a6bff, #6a11cb);
+            border-radius: 4px;
+        }
+        .question-counter {
+            font-weight: 600;
+            color: #4a6bff;
+            margin-bottom: 10px;
+        }
+        .timer-container {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4a6bff;
+        }
+        .option-label {
+            font-weight: 600;
+            color: #4a6bff;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h2><i class="fas fa-question-circle me-2"></i><%= quiz.title %></h2>
+            <% if (quiz.description) { %>
+                <p class="lead mb-0"><%= quiz.description %></p>
+            <% } %>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="question-counter">Question <span id="current-question">1</span> of <%= questions.length %></div>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: <%= (1/questions.length) * 100 %>%" 
+                    aria-valuenow="<%= (1/questions.length) * 100 %>" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        
+        <form method="POST" action="/user/submit-quiz/<%= quiz.id %>" id="quiz-form">
+            <% questions.forEach((question, index) => { %>
+                <div class="question-card" id="question-<%= index + 1 %>">
+                    <div class="question-header">
+                        <h5 class="mb-0">Question <%= index + 1 %></h5>
+                    </div>
+                    <div class="question-body">
+                        <p class="fw-bold mb-4"><%= question.question_text %></p>
+                        
+                        <div class="option-card" onclick="selectOption(this, 'q<%= question.id %>_a')">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_<%= question.id %>" id="q<%= question.id %>_a" value="a" required>
+                                <label class="form-check-label" for="q<%= question.id %>_a">
+                                    <span class="option-label">A:</span> <%= question.option_a %>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this, 'q<%= question.id %>_b')">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_<%= question.id %>" id="q<%= question.id %>_b" value="b">
+                                <label class="form-check-label" for="q<%= question.id %>_b">
+                                    <span class="option-label">B:</span> <%= question.option_b %>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <% if (question.option_c) { %>
+                            <div class="option-card" onclick="selectOption(this, 'q<%= question.id %>_c')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question_<%= question.id %>" id="q<%= question.id %>_c" value="c">
+                                    <label class="form-check-label" for="q<%= question.id %>_c">
+                                        <span class="option-label">C:</span> <%= question.option_c %>
+                                    </label>
+                                </div>
+                            </div>
+                        <% } %>
+                        
+                        <% if (question.option_d) { %>
+                            <div class="option-card" onclick="selectOption(this, 'q<%= question.id %>_d')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question_<%= question.id %>" id="q<%= question.id %>_d" value="d">
+                                    <label class="form-check-label" for="q<%= question.id %>_d">
+                                        <span class="option-label">D:</span> <%= question.option_d %>
+                                    </label>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+            
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-submit btn-lg">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Quiz
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <script>
+    // Function to handle option selection
+    function selectOption(card, inputId) {
+        // Remove selected class from all options in this question
+        const questionCard = card.closest('.question-card');
+        questionCard.querySelectorAll('.option-card').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked option
+        card.classList.add('selected');
+        
+        // Check the radio input
+        document.getElementById(inputId).checked = true;
+        
+        // Update progress
+        updateProgress();
+    }
+    
+    // Function to update progress bar and question counter
+    function updateProgress() {
+        const form = document.getElementById('quiz-form');
+        const totalQuestions = <%= questions.length %>;
+        let answeredQuestions = 0;
+        
+        // Count answered questions
+        for (let i = 0; i < form.elements.length; i++) {
+            if (form.elements[i].type === 'radio' && form.elements[i].checked) {
+                answeredQuestions++;
+            }
+        }
+        
+        // Update progress bar
+        const progressBar = document.querySelector('.progress-bar');
+        const progressPercent = (answeredQuestions / totalQuestions) * 100;
+        progressBar.style.width = progressPercent + '%';
+        progressBar.setAttribute('aria-valuenow', progressPercent);
+        
+        // Update question counter (show the highest question number with an answer)
+        document.getElementById('current-question').textContent = answeredQuestions > 0 ? answeredQuestions : 1;
+    }
+    
+    // Add event listeners to all radio inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const radioInputs = document.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                updateProgress();
+            });
+        });
+        
+        // Initialize progress
+        updateProgress();
+    });
+    </script>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

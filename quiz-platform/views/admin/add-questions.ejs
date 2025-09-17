@@ -1,0 +1,197 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <%- include('../partials/head') %>
+        <style>
+            .card-hover {
+                transition: transform 0.3s, box-shadow 0.3s;
+                border-radius: 12px;
+                overflow: hidden;
+                border: none;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .form-control, .form-select {
+                border-radius: 8px;
+                padding: 12px 16px;
+                border: 2px solid #e9ecef;
+                transition: all 0.3s;
+            }
+            .form-control:focus, .form-select:focus {
+                border-color: #4dabf7;
+                box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+            }
+            .btn-primary {
+                background: linear-gradient(45deg, #4dabf7, #339af0);
+                border: none;
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+            .btn-primary:hover {
+                background: linear-gradient(45deg, #339af0, #228be6);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+            .btn-secondary {
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+            .form-label {
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #495057;
+            }
+            .header-gradient {
+                background: linear-gradient(45deg, #4dabf7, #339af0);
+                color: white;
+                border-radius: 12px 12px 0 0;
+                padding: 20px;
+                margin: -1px -1px 0 -1px;
+            }
+            .option-card {
+                border-radius: 10px;
+                border: 2px dashed #e9ecef;
+                padding: 15px;
+                margin-bottom: 15px;
+                transition: all 0.3s;
+            }
+            .option-card:hover {
+                border-color: #4dabf7;
+                background-color: #f8f9fa;
+            }
+            .correct-answer-highlight {
+                background-color: rgba(140, 233, 154, 0.2);
+                border-radius: 10px;
+                padding: 20px;
+                margin-top: 20px;
+                border-left: 4px solid #40c057;
+            }
+            .section-title {
+                position: relative;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #e9ecef;
+            }
+            .section-title::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 60px;
+                height: 2px;
+                background: linear-gradient(45deg, #4dabf7, #339af0);
+            }
+        </style>
+    </head>
+    <body class="bg-light">
+        <%- include('../partials/header') %>
+        
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card card-hover shadow">
+                        <div class="header-gradient">
+                            <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add Questions to: <%= quiz.title %></h2>
+                        </div>
+                        
+                        <div class="card-body p-4">
+                            <% if (success) { %>
+                                <div class="alert alert-success d-flex align-items-center" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <div>
+                                        Question added successfully! Add another question or <a href="/quiz/admin/dashboard">return to dashboard</a>.
+                                    </div>
+                                </div>
+                            <% } %>
+                            
+                            <% if (errors.length) { %>
+                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <div>
+                                        <% errors.forEach(error => { %>
+                                            <p class="mb-0"><%= error.msg %></p>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+                            
+                            <form method="POST" action="/quiz/admin/add-questions/<%= quiz.id %>">
+                                <h4 class="section-title">Question Details</h4>
+                                
+                                <div class="mb-4">
+                                    <label for="question_text" class="form-label">Question Text</label>
+                                    <textarea class="form-control" id="question_text" name="question_text" rows="4" placeholder="Enter your question here..." required></textarea>
+                                </div>
+                                
+                                <h4 class="section-title">Answer Options</h4>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="option-card">
+                                            <label for="option_a" class="form-label">Option A</label>
+                                            <input type="text" class="form-control" id="option_a" name="option_a" placeholder="Enter option A" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="option-card">
+                                            <label for="option_b" class="form-label">Option B</label>
+                                            <input type="text" class="form-control" id="option_b" name="option_b" placeholder="Enter option B" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="option-card">
+                                            <label for="option_c" class="form-label">Option C (optional)</label>
+                                            <input type="text" class="form-control" id="option_c" name="option_c" placeholder="Enter option C">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="option-card">
+                                            <label for="option_d" class="form-label">Option D (optional)</label>
+                                            <input type="text" class="form-control" id="option_d" name="option_d" placeholder="Enter option D">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="correct-answer-highlight mt-4">
+                                    <div class="mb-3">
+                                        <label for="correct_answer" class="form-label">Correct Answer</label>
+                                        <select class="form-select" id="correct_answer" name="correct_answer" required>
+                                            <option value="">Select the correct answer</option>
+                                            <option value="a">Option A</option>
+                                            <option value="b">Option B</option>
+                                            <option value="c">Option C</option>
+                                            <option value="d">Option D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-5">
+                                    <a href="/quiz/admin/dashboard" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus-circle me-2"></i>Add Question
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Font Awesome for icons -->
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        
+        <%- include('../partials/footer') %>
+    </body>
+    </html>// add-quiz.ejs placeholder
