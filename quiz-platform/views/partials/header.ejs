@@ -1,224 +1,53 @@
-<!-- views/partials/header.ejs -->
-<nav class="navbar navbar-expand-lg navbar-custom">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/user/dashboard">
             <i class="fas fa-brain me-2"></i>Quiz Platform
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-
+        
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Left links -->
             <ul class="navbar-nav me-auto">
-                <% if (user) { %>
-                    <% if (isAdmin) { %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/quiz/admin/dashboard">
-                                <i class="fas fa-tachometer-alt me-1"></i>Admin Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/quiz/admin/add">
-                                <i class="fas fa-plus-circle me-1"></i>Create Quiz
-                            </a>
-                        </li>
-                    <% } else { %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/user/dashboard">
-                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/user/dashboard#quizzes">
-                                <i class="fas fa-question-circle me-1"></i>Available Quizzes
-                            </a>
-                        </li>
-                    <% } %>
-                <% } else { %>
+                <% if (user && user.role === 'admin') { %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home me-1"></i>Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">
-                            <i class="fas fa-star me-1"></i>Features
-                        </a>
+                        <a class="nav-link" href="/quiz/admin/dashboard">Admin Dashboard</a>
                     </li>
                 <% } %>
             </ul>
-
-            <!-- Right links / User menu -->
+            
             <ul class="navbar-nav">
                 <% if (user) { %>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle user-menu" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                            <i class="fas fa-user-circle me-1"></i>Hello, <%= user.username %>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-1"></i>Hello, <%= user.username %>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/user/dashboard"><i class="fas fa-user me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="/user/dashboard#results"><i class="fas fa-chart-bar me-2"></i>Results</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <% if (user.role === 'user') { %>
+                                <li><a class="dropdown-item" href="/user/profile">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                                <li><a class="dropdown-item" href="/user/results">
+                                    <i class="fas fa-chart-bar me-2"></i>Results
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            <% } %>
+                            <li><a class="dropdown-item" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
                         </ul>
                     </li>
                 <% } else { %>
                     <li class="nav-item">
-                        <a class="nav-link btn-login" href="/login">
-                            <i class="fas fa-sign-in-alt me-1"></i>Login
-                        </a>
+                        <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-register" href="/register">
-                            <i class="fas fa-user-plus me-1"></i>Register
-                        </a>
+                        <a class="nav-link" href="/register">Register</a>
                     </li>
                 <% } %>
             </ul>
         </div>
     </div>
 </nav>
-
-<!-- Styles -->
-<style>
-    .navbar-custom {
-        background: linear-gradient(45deg, #4a6bff, #6a11cb);
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        padding: 0.8rem 0;
-    }
-
-    .navbar-brand {
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: white !important;
-        display: flex;
-        align-items: center;
-    }
-
-    .navbar-brand i {
-        font-size: 1.8rem;
-    }
-
-    .nav-link {
-        color: rgba(255, 255, 255, 0.85) !important;
-        font-weight: 500;
-        padding: 0.5rem 1rem !important;
-        border-radius: 6px;
-        margin: 0 0.2rem;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-    }
-
-    .nav-link:hover, .nav-link:focus {
-        color: white !important;
-        background-color: rgba(255, 255, 255, 0.15);
-        transform: translateY(-2px);
-    }
-
-    .nav-link.btn-login, .nav-link.btn-register {
-        background-color: rgba(255, 255, 255, 0.15);
-        padding: 0.5rem 1.2rem !important;
-        margin-left: 0.5rem;
-    }
-
-    .nav-link.btn-login:hover, .nav-link.btn-register:hover {
-        background-color: rgba(255, 255, 255, 0.25);
-    }
-
-    .nav-link.btn-register {
-        background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-    }
-
-    .nav-link.btn-register:hover {
-        background: linear-gradient(45deg, #ff5252, #e53935);
-    }
-
-    .navbar-toggler {
-        border: none;
-        color: white !important;
-    }
-
-    .navbar-toggler:focus {
-        box-shadow: none;
-    }
-
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        margin-top: 0.5rem;
-    }
-
-    .dropdown-item {
-        display: flex;
-        align-items: center;
-        padding: 0.7rem 1rem;
-        transition: all 0.3s;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-        padding-left: 1.2rem;
-    }
-
-    .user-menu {
-        background-color: rgba(255, 255, 255, 0.15);
-        padding: 0.5rem 1rem !important;
-    }
-
-    .user-menu:hover {
-        background-color: rgba(255, 255, 255, 0.25);
-    }
-
-    @media (max-width: 991px) {
-        .navbar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-link {
-            margin: 0.2rem 0;
-        }
-
-        .nav-link.btn-login, .nav-link.btn-register {
-            margin: 0.2rem 0;
-            display: inline-block;
-            width: auto;
-        }
-
-        .dropdown-menu {
-            margin-top: 0;
-            box-shadow: none;
-            border-radius: 0;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .dropdown-item {
-            color: white !important;
-        }
-
-        .dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white !important;
-        }
-    }
-</style>
-
-<!-- Font Awesome for icons -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Initialize Dropdowns -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var dropdownEl = document.querySelectorAll('.dropdown-toggle');
-        dropdownEl.forEach(function (el) {
-            new bootstrap.Dropdown(el);
-        });
-    });
-</script>

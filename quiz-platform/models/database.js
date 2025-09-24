@@ -5,8 +5,14 @@ const bcrypt = require('bcryptjs');
 const dbPath = path.join(__dirname, '..', 'database', 'quiz.db');
 const db = new sqlite3.Database(dbPath);
 
-// Enable foreign key support
-db.run('PRAGMA foreign_keys = ON');
+// Enable foreign key support - THIS IS CRITICAL
+db.run("PRAGMA foreign_keys = ON", (err) => {
+    if (err) {
+        console.error("Error enabling foreign keys:", err);
+    } else {
+        console.log("Foreign key enforcement is enabled.");
+    }
+});
 
 // Initialize database with tables
 db.serialize(() => {
@@ -27,7 +33,7 @@ db.serialize(() => {
         description TEXT,
         created_by INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (created_by) REFERENCES users (id)
+        FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE CASCADE
     )`);
 
     // Questions table
@@ -37,8 +43,8 @@ db.serialize(() => {
         question_text TEXT NOT NULL,
         option_a TEXT NOT NULL,
         option_b TEXT NOT NULL,
-        option_c TEXT,
-        option_d TEXT,
+        option_c TEXT NOT NULL,
+        option_d TEXT NOT NULL,
         correct_answer TEXT NOT NULL,
         FOREIGN KEY (quiz_id) REFERENCES quizzes (id) ON DELETE CASCADE
     )`);
@@ -51,8 +57,8 @@ db.serialize(() => {
         score INTEGER,
         total_questions INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id),
-        FOREIGN KEY (quiz_id) REFERENCES quizzes (id)
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+        FOREIGN KEY (quiz_id) REFERENCES quizzes (id) ON DELETE CASCADE
     )`);
 
     // Create default admin user if not exists

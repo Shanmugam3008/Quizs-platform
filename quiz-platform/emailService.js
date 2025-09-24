@@ -1,19 +1,32 @@
 const nodemailer = require('nodemailer');
 
-// FIX: Use createTransport (not createTransporter)
+console.log('Email service loaded...');
+
+// Verify transporter configuration
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'info.quizplatform@gamil.com'
-        pass: 'xfwa uhlo ujmc lazh'
+        user: 'info.quizplatform@gmail.com',
+        pass: 'kely nvay dsbh lwxj'
+    }
+});
+
+// Verify connection configuration
+transporter.verify(function(error, success) {
+    if (error) {
+        console.log('❌ Email transporter error:', error);
+    } else {
+        console.log('✅ Email server is ready to send messages');
     }
 });
 
 // Function to send thank you email
 async function sendThankYouEmail(userEmail, userName, quizName, score) {
+    console.log(`Attempting to send email to: ${userEmail}`);
+    
     try {
         const mailOptions = {
-            from:'info.quizplatform@gamil.com',
+            from: 'info.quizplatform@gmail.com',
             to: userEmail,
             subject: `Thank you for taking the ${quizName} quiz!`,
             html: `
@@ -26,10 +39,11 @@ async function sendThankYouEmail(userEmail, userName, quizName, score) {
         };
 
         let info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully: %s', info.messageId);
+        console.log('✅ Email sent successfully: %s', info.messageId);
+        console.log('✅ Preview URL: %s', nodemailer.getTestMessageUrl(info));
         return true;
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('❌ Error sending email:', error);
         return false;
     }
 }

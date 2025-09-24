@@ -128,13 +128,36 @@ router.get('/admin/manage', isAuthenticated, isAdmin, (req, res) => {
 });
 
 // Delete quiz
+// Delete quiz
 router.delete('/admin/delete/:id', isAuthenticated, isAdmin, (req, res) => {
     const { id } = req.params;
-    db.run("DELETE FROM quizzes WHERE id = ?", [id], function(err) {
+    console.log(`Attempting to delete quiz with ID: ${id}`);
+    
+    // First, check if foreign keys are enabled
+    db.get("PRAGMA foreign_keys", (err, row) => {
         if (err) {
+            console.error("Error checking foreign keys:", err);
             return res.status(500).json({ success: false, message: 'Database error' });
         }
-        res.json({ success: true, message: 'Quiz deleted successfully' });
+        
+        console.log("Foreign keys enabled:", row.foreign_keys);
+        
+        // Since we have ON DELETE CASCADE, we can just delete the quiz
+        // and the database will automatically delete related questions and results
+        db.run("DELETE FROM quizzes WHERE id = ?", [id], function(err) {
+            if (err) {
+                console.error("Error deleting quiz:", err);
+                return res.status(500).json({ success: false, message: 'Database error: Could not delete quiz' });
+            }
+            
+            console.log(`Deleted quiz with ID: ${id}. Changes: ${this.changes}`);
+            
+            if (this.changes === 0) {
+                return res.status(404).json({ success: false, message: 'Quiz not found' });
+            }
+            
+            res.json({ success: true, message: 'Quiz deleted successfully' });
+        });
     });
 });
 
@@ -154,7 +177,7 @@ router.delete('/admin/question/:id', isAuthenticated, isAdmin, (req, res) => {
     const { id } = req.params;
     
     db.run("DELETE FROM questions WHERE id = ?", [id], function(err) {
-        if (err) {
+        if (err) { 
             return res.status(500).json({ success: false, message: 'Database error' });
         }
         

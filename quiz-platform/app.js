@@ -69,6 +69,13 @@ app.use((err, req, res, next) => {
     res.status(500).render('error', { message: 'Something went wrong!' });
 });
 
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;   // now available in all EJS templates
+  res.locals.user = req.user || null;  // also make user available globally
+  next();
+});
+
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

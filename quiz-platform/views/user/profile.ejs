@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Quiz Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2.5rem;
+        }
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .btn-results {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-results:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        .results-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/user/dashboard">
+                <i class="fas fa-brain me-2"></i>Quiz Platform
+            </a>
+            <ul class="navbar-nav me-auto">
+                <% if (user && user.role === 'user') { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/dashboard">Dashboard</a>
+                    </li>
+                <% } %>
+            </ul>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i>Hello ! <%= user.username %>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/user/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a></li>
+                        <li><a class="dropdown-item" href="/user/profile">
+                            <i class="fas fa-user me-2"></i>Profile
+                        </a></li>
+                        <li><a class="dropdown-item" href="/user/results">
+                            <i class="fas fa-chart-bar me-2"></i>Results
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2><%= user.username %></h2>
+            <p class="mb-0">Quiz Platform Member</p>
+        </div>
+        
+        <!-- User Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h4><i class="fas fa-user-circle me-2 text-primary"></i>Profile Information</h4>
+                    <div class="info-item">
+                        <strong>Username:</strong>
+                        <span><%= user.username %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong>
+                        <span><%= user.email || 'Not provided' %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Role:</strong>
+                        <span class="badge bg-primary"><%= user.role %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Member Since:</strong>
+                        <span>Active Member</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h4><i class="fas fa-chart-bar me-2 text-success"></i>Quiz Statistics</h4>
+                    <div class="info-item">
+                        <strong>Total Quizzes Taken:</strong>
+                        <span><%= results.length %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Average Score:</strong>
+                        <span>
+                            <% 
+                                let totalScore = 0;
+                                let totalQuestions = 0;
+                                results.forEach(result => {
+                                    totalScore += result.score;
+                                    totalQuestions += result.total_questions;
+                                });
+                                const avgScore = results.length > 0 ? ((totalScore / totalQuestions) * 100).toFixed(1) : 0;
+                            %>
+                            <%= avgScore %>%
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Quizzes Passed:</strong>
+                        <span>
+                            <%
+                                const passedQuizzes = results.filter(result => {
+                                    return (result.score / result.total_questions) >= 0.6;
+                                }).length;
+                            %>
+                            <%= passedQuizzes %>/<%= results.length %>
+                        </span>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="/user/results" class="btn-results">
+                            <i class="fas fa-chart-bar me-2"></i>View Detailed Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Results -->
+        <div class="info-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0"><i class="fas fa-history me-2 text-info"></i>Recent Quiz Results</h4>
+            </div>
+            
+            <% if (results.length > 0) { %>
+                <div class="results-table">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Quiz Title</th>
+                                <th>Score</th>
+                                <th>Percentage</th>
+                                <th>Date Taken</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% results.slice(0, 5).forEach(result => { %>
+                                <tr>
+                                    <td><strong><%= result.title %></strong></td>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            <%= result.score %>/<%= result.total_questions %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <%
+                                            const percentage = ((result.score / result.total_questions) * 100).toFixed(1);
+                                        %>
+                                        <strong><%= percentage %>%</strong>
+                                    </td>
+                                    <td>
+                                        <%= new Date(result.created_at).toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <%
+                                            let statusClass = 'success';
+                                            let statusText = 'Passed';
+                                            if (percentage < 60) {
+                                                statusClass = 'danger';
+                                                statusText = 'Failed';
+                                            } else if (percentage < 80) {
+                                                statusClass = 'warning';
+                                                statusText = 'Good';
+                                            }
+                                        %>
+                                        <span class="badge bg-<%= statusClass %>"><%= statusText %></span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="no-results">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <h5>No Quiz Results Yet</h5>
+                    <p>You haven't taken any quizzes yet. Start your quiz journey now!</p>
+                    <a href="/user/dashboard" class="btn btn-primary">
+                        <i class="fas fa-play me-1"></i>Take a Quiz
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Quiz Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>
